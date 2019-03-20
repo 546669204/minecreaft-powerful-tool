@@ -1,0 +1,7 @@
+key.attack.auto=自动攻击
+key.tool.name=万能工具箱
+chat.tool.attack.on=自动攻击：On
+chat.tool.attack.off=自动攻击：Off
+config.attack.range=攻击范围 5代表1格
+config.attack.time=攻击间隔 默认3个tick
+powertool.config.title=配置修改
