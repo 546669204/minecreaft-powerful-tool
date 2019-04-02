@@ -23,10 +23,12 @@ public class ClientProxy extends CommonProxy
     public void init(FMLInitializationEvent event)
     {
         super.init(event);
-        new MobAttack();//初始化自动攻击
         new KeyLoader();//初始化热键系统
         new ModConfig();//配置
+        new MobAttack();//初始化自动攻击
+
         new PickUp();//拾取过滤
+        new Collection();//自动采集
         new FindPath();//自动寻路
     }
 

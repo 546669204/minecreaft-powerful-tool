@@ -45,7 +45,7 @@ public class KeyLoader
         }
         if (KeyLoader.autoAttack.isPressed())
         {
-            MobAttack.isRun = !MobAttack.isRun;
+            MobAttack.changeStatus();
             Utils.sendMessage(MobAttack.isRun?"自动攻击：启动":"自动攻击：关闭");
             return ;
         }
@@ -59,8 +59,8 @@ public class KeyLoader
             }
         }
         if (KeyLoader.test.isPressed()){
-            FindPath.isRun = !FindPath.isRun;
-            Utils.sendMessage(FindPath.isRun?"自动采集：启动":"自动采集：关闭");
+            Collection.changeStatus();
+            Utils.sendMessage(Collection.isRun?"自动采集：启动":"自动采集：关闭");
         }
     }
 

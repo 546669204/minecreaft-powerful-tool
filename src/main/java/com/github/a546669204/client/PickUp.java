@@ -28,12 +28,14 @@ public class PickUp {
     public void onItemPickup (EntityItemPickupEvent event)
     {
         Item item = event.getItem().getItem().getItem();
-        Main.logger.info("您拾起了   " + event.getItem().getItem().getDisplayName());
+        String itemName = event.getItem().getItem().getDisplayName();
+        Main.logger.info("您拾起了   " + itemName);
         //判断拾起的是否是 装备
         if(item instanceof ItemShield ||item instanceof ItemSword || item instanceof ItemBow || item instanceof ItemAxe){
             if (ModConfig.pickUp.notWhite){
-                if(event.getItem().getItem().getDisplayName().indexOf("§f") == 0  || event.getItem().getItem().getDisplayName().indexOf("§") == -1){
+                if(itemName.indexOf("§f") == 0  || itemName.indexOf("§") == -1){
                     event.setResult(DENY);
+                    event.setCanceled(true);
                     return ;
                 }
             }

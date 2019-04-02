@@ -25,7 +25,10 @@ public class config {
     private JButton closeButton;
     private JCheckBox checkBox1;
     private JCheckBox checkBox2;
+    private JRadioButton radioButton2;
+    private JRadioButton radioButton3;
     private JCheckBox checkBox3;
+    private JRadioButton radioButton1;
     private JButton button1;
     private JPopupMenu popupMenu = null;
     private JPopupMenu popupMenu2 = null;
@@ -54,9 +57,20 @@ public class config {
         checkBox1.setSelected(ModConfig.autoAttack.useShiled);
         //自动拾取 不要白色
         checkBox2.setSelected(ModConfig.pickUp.notWhite);
-        //自动采集
-//        checkBox3.setSelected(ModConfig.pickUp.autoCollection);
-
+        //自动转向
+        checkBox3.setSelected(ModConfig.autoAttack.turnTarget);
+        //自动攻击类型
+        switch (ModConfig.autoAttack.type) {
+            case 0:
+                radioButton1.setSelected(true);
+                break;
+            case 1:
+                radioButton2.setSelected(true);
+                break;
+            case 2:
+                radioButton3.setSelected(true);
+                break;
+        }
 
         textField1.setText("" + ModConfig.autoAttack.time);
         textField2.setText("" + ModConfig.autoAttack.range);
@@ -153,7 +167,19 @@ public class config {
 
                 ModConfig.autoAttack.useShiled = checkBox1.isSelected();
                 ModConfig.pickUp.notWhite = checkBox2.isSelected();
-//                ModConfig.pickUp.autoCollection = checkBox3.isSelected();
+                ModConfig.autoAttack.turnTarget = checkBox3.isSelected();
+                int autoAttackType = 0;
+                if (radioButton1.isSelected()) {
+                    autoAttackType = 0;
+                }
+                if (radioButton2.isSelected()) {
+                    autoAttackType = 1;
+                }
+                if (radioButton3.isSelected()) {
+                    autoAttackType = 2;
+                }
+
+                ModConfig.autoAttack.type = autoAttackType;
 
 
                 ModConfig.store();
@@ -196,7 +222,6 @@ public class config {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 2;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         config.add(label1, gbc);
@@ -204,7 +229,7 @@ public class config {
         textField1.setColumns(10);
         textField1.setText("");
         gbc = new GridBagConstraints();
-        gbc.gridx = 2;
+        gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.gridwidth = 3;
         gbc.weightx = 1.0;
@@ -216,14 +241,13 @@ public class config {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.gridwidth = 2;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         config.add(label2, gbc);
         closeButton = new JButton();
         closeButton.setText("取消");
         gbc = new GridBagConstraints();
-        gbc.gridx = 2;
+        gbc.gridx = 1;
         gbc.gridy = 5;
         gbc.gridwidth = 3;
         gbc.weightx = 1.0;
@@ -232,7 +256,7 @@ public class config {
         final JLabel label3 = new JLabel();
         label3.setText("攻击目标");
         gbc = new GridBagConstraints();
-        gbc.gridx = 2;
+        gbc.gridx = 1;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.weightx = 1.0;
@@ -241,14 +265,14 @@ public class config {
         final JLabel label4 = new JLabel();
         label4.setText("目标怪物");
         gbc = new GridBagConstraints();
-        gbc.gridx = 4;
+        gbc.gridx = 3;
         gbc.gridy = 3;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         config.add(label4, gbc);
         final JScrollPane scrollPane1 = new JScrollPane();
         gbc = new GridBagConstraints();
-        gbc.gridx = 2;
+        gbc.gridx = 1;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.weightx = 1.0;
@@ -263,7 +287,7 @@ public class config {
         scrollPane1.setViewportView(list1);
         final JScrollPane scrollPane2 = new JScrollPane();
         gbc = new GridBagConstraints();
-        gbc.gridx = 4;
+        gbc.gridx = 3;
         gbc.gridy = 4;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
@@ -277,7 +301,7 @@ public class config {
         scrollPane2.setViewportView(list2);
         textField2 = new JTextField();
         gbc = new GridBagConstraints();
-        gbc.gridx = 2;
+        gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.gridwidth = 3;
         gbc.weightx = 1.0;
@@ -290,7 +314,6 @@ public class config {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 4;
-        gbc.gridwidth = 2;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         config.add(label5, gbc);
@@ -299,23 +322,13 @@ public class config {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 5;
-        gbc.gridwidth = 2;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         config.add(saveButton, gbc);
-        checkBox1 = new JCheckBox();
-        checkBox1.setText("自动防御");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.anchor = GridBagConstraints.WEST;
-        config.add(checkBox1, gbc);
         final JLabel label6 = new JLabel();
         label6.setText("拾取控制");
         gbc = new GridBagConstraints();
-        gbc.gridx = 2;
+        gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
@@ -324,20 +337,48 @@ public class config {
         checkBox2 = new JCheckBox();
         checkBox2.setText("不捡白装 ");
         gbc = new GridBagConstraints();
-        gbc.gridx = 3;
+        gbc.gridx = 2;
         gbc.gridy = 2;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         config.add(checkBox2, gbc);
-        checkBox3 = new JCheckBox();
-        checkBox3.setText("自动采集");
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new BorderLayout(0, 0));
         gbc = new GridBagConstraints();
-        gbc.gridx = 1;
+        gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.WEST;
-        config.add(checkBox3, gbc);
+        gbc.fill = GridBagConstraints.BOTH;
+        config.add(panel1, gbc);
+        final JPanel panel2 = new JPanel();
+        panel2.setLayout(new BorderLayout(0, 0));
+        panel1.add(panel2, BorderLayout.NORTH);
+        checkBox1 = new JCheckBox();
+        checkBox1.setText("自动防御");
+        panel2.add(checkBox1, BorderLayout.WEST);
+        checkBox3 = new JCheckBox();
+        checkBox3.setText("自动转向");
+        panel2.add(checkBox3, BorderLayout.EAST);
+        final JPanel panel3 = new JPanel();
+        panel3.setLayout(new BorderLayout(0, 0));
+        panel1.add(panel3, BorderLayout.CENTER);
+        radioButton3 = new JRadioButton();
+        radioButton3.setText("自动追怪");
+        panel3.add(radioButton3, BorderLayout.EAST);
+        radioButton2 = new JRadioButton();
+        radioButton2.setHideActionText(false);
+        radioButton2.setText("不动如山");
+        panel3.add(radioButton2, BorderLayout.CENTER);
+        radioButton1 = new JRadioButton();
+        radioButton1.setSelected(true);
+        radioButton1.setText("无");
+        panel3.add(radioButton1, BorderLayout.WEST);
         label1.setLabelFor(textField1);
+        ButtonGroup buttonGroup;
+        buttonGroup = new ButtonGroup();
+        buttonGroup.add(radioButton3);
+        buttonGroup.add(radioButton2);
+        buttonGroup.add(radioButton1);
     }
 
     /**
