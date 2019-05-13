@@ -30,6 +30,7 @@ public class ClientProxy extends CommonProxy
         new PickUp();//拾取过滤
         new Collection();//自动采集
         new FindPath();//自动寻路
+        new autoLogin();//自动登陆
     }
 
     @Override
