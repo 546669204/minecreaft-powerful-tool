@@ -3,19 +3,21 @@ package com.github.a546669204.client.config;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.lang.reflect.Field;
+import java.util.*;
 
 public class ModConfig {
 
     public ModConfig(){
         load();
+        Global = this;
     }
     public static final AutoAttack autoAttack = new AutoAttack();
     public static final PickUp pickUp = new PickUp();
     public static final AutoCollection autoCollection = new AutoCollection();
+    public static final AutoLogin autoLogin = new AutoLogin();
+    public static Object Global = null;
+
 
     public static class AutoAttack {
 
@@ -47,8 +49,15 @@ public class ModConfig {
 
     }
 
+    public static class AutoLogin{
+        public double time = 30*60*1000L;//检测间隔
+        public String loginCmd = "/l 123456";//登陆命令
+        public String ip = "127.0.0.1";//服务器ip
+        public int port = 65525;//服务器端口
+    }
 
-    public static void load(){
+
+    public void load(){
         try{
             Properties pro = new Properties();
             File file  = new File("powerTool.properties");
@@ -58,20 +67,47 @@ public class ModConfig {
             FileInputStream in = new FileInputStream(file);
             pro.load(in);
 
-            autoAttack.time = new Double(pro.getProperty("time","3"));
-            autoAttack.range = new Double(pro.getProperty("range","15"));
+            Set<String>  proset = pro.stringPropertyNames();
+            for(String proName:proset){
+                System.out.println(proName);
+                String proValue = pro.getProperty(proName);
+                if(proValue != null){
+                    Object that = this;
+                    Field field = null;
+                    for(String v:proName.split("\\.")){
+                        field = that.getClass().getField(v);
+                        if(!StringUtils.endsWith(proName,v)){
+                            that = field.get(that);
+                        }
 
-            autoAttack.useShiled = new Boolean(pro.getProperty("useShiled","false"));
-
-            pickUp.notWhite = new Boolean(pro.getProperty("pickUp.notWhite","false"));
-            autoAttack.turnTarget = new Boolean(pro.getProperty("autoAttack.turnTarget","false"));
-
-            autoAttack.type = new Integer(pro.getProperty("autoAttack.type","0"));
-
-            System.out.println(pro.getProperty("target",""));
-            String[] arr = pro.getProperty("target","").split("\\|\\|\\|");
-            for (int i = 0; i < arr.length; i++) {
-                autoAttack.target.put(arr[i],true);
+                    }
+                    Class type = field.getType();
+                    if(type.isAssignableFrom(String.class)){
+                        field.set(that,proValue);
+                    }else if(type.isAssignableFrom(Number.class)){
+                        if(type == Integer.class){
+                            field.set(that,new Integer(proValue) );
+                        }
+                        if(type == Double.class){
+                            field.set(that,new Double(proValue) );
+                        }
+                        if(type == Long.class){
+                            field.set(that,new Long(proValue) );
+                        }
+                        if(type == Float.class){
+                            field.set(that,new Float(proValue) );
+                        }
+                    }else if(type.isAssignableFrom(Boolean.class)){
+                        field.set(that,new Boolean(proValue) );
+                    }else if(type.isAssignableFrom(Map.class)){
+                        String[] arr = proValue.split("\\|\\|\\|");
+                        Map hashmap = new HashMap();
+                        for (int i = 0; i < arr.length; i++) {
+                            hashmap.put(arr[i],true);
+                        }
+                        field.set(that,hashmap);
+                    }
+                }
             }
             in.close();
         }catch(Exception e){
@@ -88,16 +124,7 @@ public class ModConfig {
             FileOutputStream oFile = new FileOutputStream(file);
             Properties pro = new Properties();
 
-            pro.setProperty("time",""+ autoAttack.time);
-            pro.setProperty("range",""+ autoAttack.range);
-
-            pro.setProperty("useShiled",autoAttack.useShiled.toString());
-            pro.setProperty("pickUp.notWhite",pickUp.notWhite.toString());
-            pro.setProperty("autoAttack.turnTarget",autoAttack.turnTarget.toString());
-            pro.setProperty("autoAttack.type","" + autoAttack.type);
-
-
-            pro.setProperty("target", StringUtils.join((String[])autoAttack.target.keySet().toArray(new String[0]),"|||"));
+            diguiWrite(ModConfig.class,"",Global,pro);
 
             pro.store(oFile,"xiaoming");
             oFile.close();
@@ -106,5 +133,31 @@ public class ModConfig {
         }
 
     }
+
+    public static void diguiWrite(Class c,String parent,Object that,Properties pro) {
+        try {
+            Field[] fields = c.getFields();
+            for (Field field : fields) {
+                Class type = field.getType();
+                if(type.isPrimitive()){
+                    pro.setProperty(parent + field.getName(),""+ field.get(that));
+                }else if(type.isAssignableFrom(String.class)){
+                    pro.setProperty(parent + field.getName(),""+ field.get(that));
+                }else if(type.isAssignableFrom(Number.class)){
+                    pro.setProperty(parent + field.getName(),""+ field.get(that));
+                }else if(type.isAssignableFrom(Boolean.class)){
+                    pro.setProperty(parent + field.getName(),field.get(that).toString());
+                }else if(type.isAssignableFrom(Map.class)){
+                    HashMap hashmap = (HashMap)field.get(that);
+                    pro.setProperty(parent + field.getName(),StringUtils.join((String[])hashmap.keySet().toArray(new String[0]),"|||"));
+                }else{
+                    diguiWrite(type,field.getName()+".",field.get(that),pro);
+                }
+            }
+        }catch (Exception e){
+
+        }
+    };
+
 
 }
