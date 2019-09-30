@@ -8,6 +8,7 @@ import java.util.*;
 
 public class ModConfig {
 
+
     public ModConfig(){
         load();
         Global = this;
@@ -50,7 +51,7 @@ public class ModConfig {
     }
 
     public static class AutoLogin{
-        public double time = 30*60*1000L;//检测间隔
+        public long time = 30*60*1000L;//检测间隔
         public String loginCmd = "/l 123456";//登陆命令
         public String ip = "127.0.0.1";//服务器ip
         public int port = 65525;//服务器端口

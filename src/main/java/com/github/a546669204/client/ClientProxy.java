@@ -5,6 +5,7 @@ import com.github.a546669204.common.CommonProxy;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -30,7 +31,8 @@ public class ClientProxy extends CommonProxy
         new PickUp();//拾取过滤
         new Collection();//自动采集
         new FindPath();//自动寻路
-        new autoLogin();//自动登陆
+        new AutoLogin();//自动登陆
+
     }
 
     @Override
